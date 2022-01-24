@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function App() {
@@ -8,6 +8,10 @@ function App() {
   const [email, setEmail] = useState('')
   const [date, setDate] = useState('')
   const [consent, setConsent] = useState(false)
+
+  useEffect(async () => {
+    const res = await axios.get('https://my-json-server.typicode.com/JustUtahCoders/interview-users-api/users')
+  });
 
   const handleClear = () => {
     setName('')
@@ -32,30 +36,27 @@ function App() {
     const month = parseInt(arr[1])
     const day = parseInt(arr[2])
     const year = parseInt(arr[0])
-    console.log(month)
     if(date === ''){
       return true
     }else if(month <= 12 && day < 31 && year < 2022 && year > 1900){
       return true
     }else{
-      alert('date invalid')
+      alert('birth date is valid try adjusting the year')
     }
   };
 
   const handleSubmit = async () => {
-    const json = JSON.stringify({name, email, birthDate: date, emailConsent: consent})
-    // console.log(json)
 
     if(name && checkEmail() && checkDate() && consent){
-      const res = await axios.post('https://my-json-server.typicode.com/JustUtahCoders/interview-users-api/users', json)
+      const res = await axios.post('https://my-json-server.typicode.com/JustUtahCoders/interview-users-api/users', { name, email, birthDate: date, emailConsent: consent})
       if(res){
-        console.log(res)
-        alert(res.status)
+        alert('Success')
+        handleClear()
       }
     }
   };
 
-  // console.log(name, email, date, consent)
+  console.log(id);
 
   return (
     <div className="App">

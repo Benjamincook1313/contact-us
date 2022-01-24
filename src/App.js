@@ -56,8 +56,6 @@ function App() {
     }
   };
 
-  console.log(id);
-
   return (
     <div className="App">
       <h1>Contact Us</h1>

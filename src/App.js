@@ -1,86 +1,70 @@
-import './App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 function App() {
+  
+  const cd = new Date()
+  const d = `${cd.getFullYear()}-${cd.getMonth()+1}-${cd.getDate()}`
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [date, setDate] = useState('')
   const [consent, setConsent] = useState(false)
 
-  useEffect(async () => {
-    const res = await axios.get('https://my-json-server.typicode.com/JustUtahCoders/interview-users-api/users')
-  });
 
-  const handleClear = () => {
+  const handleReset = () => {
     setName('')
     setEmail('')
     setDate('')
     setConsent(false)
   };
 
-  const checkEmail = () => {
-    const regx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-
-    if(regx.test(email)){
-      return true
-    }else{
-      alert('not a valid email')
-    }
-  };
-
-  const checkDate = () => {
-    const arr = date.split('-')
-  
-    const month = parseInt(arr[1])
-    const day = parseInt(arr[2])
-    const year = parseInt(arr[0])
-    if(date === ''){
-      return true
-    }else if(month <= 12 && day < 31 && year < 2022 && year > 1900){
-      return true
-    }else{
-      alert('birth date is valid try adjusting the year')
-    }
-  };
-
   const handleSubmit = async () => {
-
-    if(name && checkEmail() && checkDate() && consent){
-      const res = await axios.post('https://my-json-server.typicode.com/JustUtahCoders/interview-users-api/users', { name, email, birthDate: date, emailConsent: consent})
-      if(res){
-        alert('Success')
-        handleClear()
-      }
+    const res = await axios.post('https://my-json-server.typicode.com/JustUtahCoders/interview-users-api/users', {name, email, birthDate: date, emailConsent: consent})
+    if(res.data){
+      console.log(res)
+      alert('Success')
     }
   };
+
+  console.log(name, email, date, consent)
 
   return (
-    <div className="App">
+    <div className="App" 
+      style={{
+        width: '100vw', height: '100vh', 
+        display: 'flex', alignItems: 'center', 
+        flexDirection: 'column'
+      }}>
+        
       <h1>Contact Us</h1>
-      <div>
-        <h4> * name</h4>
-        <input type='text' value={name} onChange={e => setName(e.target.value)}/>
-      </div>
-      <div>
-        <h4>* email</h4>
-        <input type='email' value={email} onChange={e => setEmail(e.target.value)}/>
-      </div>
-      <div>
-        <h4>Birth Date</h4>
-        <input type='date' value={date} onChange={e => setDate(e.target.value)}/>
-      </div>
-      <div>
-        <h4>* I agree to be contacted via email </h4>
-        <input type='checkbox' checked={consent} onChange={() => setConsent(!consent)}/>
-      </div>
-      <br/>
-      <div>
-        <button onClick={handleClear}>Clear</button>
-        <button onClick={handleSubmit}>Submit</button>
-      </div>
-      <p>* required to submit</p>
+        <p>* required to submit</p>
+      <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+        <label htmlFor='name'> 
+          * name:
+          <input id='name' type='text' value={name} onChange={e => setName(e.target.value)} required/>
+        </label>
+        <br/>
+        <label htmlFor='email'>
+          * email:
+          <input id='email' type='email' value={email} onChange={e => setEmail(e.target.value)} required/>
+        </label>
+        <br/>
+        <label htmlFor='date'>
+          birth date:
+          <input id='date' type='date' value={date} onChange={e => setDate(e.target.value)} min='1900-01-01' max={d}/>
+        </label>
+        <br/>
+        <label htmlFor='consent'>
+          * I agree to be contacted via email
+          <input id='consent' type='checkbox' value={consent} onChange={e => setConsent(e.target.value)} required />
+        </label>
+        <br/>
+        <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+          <button onClick={handleReset}>Clear</button>
+          <button type='submit'>Submit</button>
+        </div>
+      </form >
     </div>
   );
 }
